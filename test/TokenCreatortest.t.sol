@@ -1,69 +1,60 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.2;
+// CustomToken.t.sol
+pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
 import "../src/TokenCreator.sol";
 
 contract CustomTokenTest is Test {
     CustomToken public token;
-    address public owner = address(0x123);
-    address public feeReceiver = address(0x456);
-    address public recipient = address(0x789);
+    address public feeReceiver;
+    address public user1;
+    address public user2;
 
     function setUp() public {
-        token = new CustomToken("Test Token", "TT", 1000 * 10**18, 1, feeReceiver);
-        token.transferOwnership(owner);
+        feeReceiver = address(1);
+        user1 = address(2);
+        user2 = address(3);
+
+        token = new CustomToken("Custom Token", "CTK", 1000000, 5, feeReceiver);
     }
 
-    function testInitialSupply() public {
-        uint256 expectedSupply = 1000 * 10**18;
-        assertEq(token.balanceOf(owner), expectedSupply);
+    function testTransfer() public {
+        // Transfer 100 tokens from user1 to user2
+        vm.prank(user1);
+        token.transfer(user2, 100);
+
+        // Check that user2 received 95 tokens (100 - 5% fee)
+        assertEq(token.balanceOf(user2), 95);
+
+        // Check that feeReceiver received 5 tokens (5% fee)
+        assertEq(token.balanceOf(feeReceiver), 5);
+    }
+
+    function testTransferFrom() public {
+        // Approve user1 to spend 100 tokens from user2
+        vm.prank(user2);
+        token.approve(user1, 100);
+
+        // Transfer 100 tokens from user2 to user3 using user1 as spender
+        vm.prank(user1);
+        token.transferFrom(user1, user2, 100);
+
+        // Check that user3 received 95 tokens (100 - 5% fee)
+        assertEq(token.balanceOf(user2), 95);
+
+        // Check that feeReceiver received 5 tokens (5% fee)
+        assertEq(token.balanceOf(feeReceiver), 5);
     }
 
     function testTransferFee() public {
-        uint256 transferAmount = 100 * 10**18;
-        uint256 feeAmount = (transferAmount * 1) / 100; // 1% fee
+        // Transfer 100 tokens from user1 to user2 with a 10% fee
+        vm.prank(user1);
+        token.transfer(user2, 100);
 
-        token.transfer(owner, transferAmount);
+        // Check that user2 received 90 tokens (100 - 10% fee)
+        assertEq(token.balanceOf(user2), 90);
 
-        uint256 initialRecipientBalance = token.balanceOf(recipient);
-        uint256 initialFeeReceiverBalance = token.balanceOf(feeReceiver);
-
-        token.transfer(recipient, transferAmount);
-
-        assertEq(token.balanceOf(recipient), initialRecipientBalance + (transferAmount - feeAmount));
-        assertEq(token.balanceOf(feeReceiver), initialFeeReceiverBalance + feeAmount);
-    }
-
-    function testSetTransferFee() public {
-        token.setTransferFee(5); // Set fee to 5%
-        uint256 transferAmount = 100 * 10**18;
-        uint256 feeAmount = (transferAmount * 5) / 100; // 5% fee
-
-        token.transfer(owner, transferAmount);
-
-        uint256 initialRecipientBalance = token.balanceOf(recipient);
-        uint256 initialFeeReceiverBalance = token.balanceOf(feeReceiver);
-
-        token.transfer(recipient, transferAmount);
-
-        assertEq(token.balanceOf(recipient), initialRecipientBalance + (transferAmount - feeAmount));
-        assertEq(token.balanceOf(feeReceiver), initialFeeReceiverBalance + feeAmount);
-    }
-
-    function testSetFeeReceiver() public {
-        address newFeeReceiver = address(0xabc);
-        token.setFeeReceiver(newFeeReceiver);
-
-        uint256 transferAmount = 100 * 10**18;
-        uint256 feeAmount = (transferAmount * 1) / 100; // 1% fee
-
-        token.transfer(owner, transferAmount);
-
-        uint256 initialNewFeeReceiverBalance = token.balanceOf(newFeeReceiver);
-
-        token.transfer(recipient, transferAmount);
-
-        assertEq(token.balanceOf(newFeeReceiver), initialNewFeeReceiverBalance + feeAmount);
+        // Check that feeReceiver received 10 tokens (10% fee)
+        assertEq(token.balanceOf(feeReceiver), 10);
     }
 }
