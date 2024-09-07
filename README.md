@@ -40,23 +40,3 @@ To use the CustomToken contract, follow these steps:
 Deploy the contract with the desired token name, symbol, initial supply, transfer fee, and fee receiver.
 Use the transfer or transferFrom function to transfer tokens between addresses.
 The contract will automatically deduct the transfer fee and send it to the fee receiver.
-Example
-Here is an example of how to deploy the contract and transfer tokens:
-
-solidity
-Edit
-Copy code
-pragma solidity ^0.8.0;
-
-contract MyContract {
-    function deployCustomToken() public {
-        CustomToken token = new CustomToken("MyToken", "MTK", 1000000, 5, 0x742d35Cc6634C0532925a3b844Bc454e4438f44e);
-        token.transfer(address(this), 1000);
-    }
-}
-Resources
-OpenZeppelin ERC20 Contract
-Contributing
-Contributions to the CustomToken contract are welcome! If you'd like to contribute to the project, please follow the guidelines outlined in the Contributing Guide.
-
-I hope this helps! Let me know if you'd like me to add or modify anything.
