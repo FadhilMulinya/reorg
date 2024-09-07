@@ -1,66 +1,62 @@
-## Foundry
+CustomToken README
+Introduction
+The CustomToken contract is an ERC20 token that implements a transfer fee mechanism. This contract allows for the creation of a custom token with a transfer fee that is deducted from the transfer amount and sent to a designated fee receiver.
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Contract Overview
+The CustomToken contract has three main components:
 
-Foundry consists of:
+Constructor
+The constructor initializes the contract with the token's name, symbol, initial supply, transfer fee, and fee receiver.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Transfer Function
+The transfer function allows users to transfer tokens from one address to another. The function deducts the transfer fee from the transfer amount and sends it to the fee receiver.
 
-## Documentation
+Custom Transfer Function
+The custom transfer function is an internal function that calculates the transfer fee, subtracts it from the transfer amount, and transfers the fee to the fee receiver.
 
-https://book.getfoundry.sh/
+Variables
+transferFee
+The transfer fee as a percentage of the transfer amount.
 
-## Usage
+feeReceiver
+The address that receives the transfer fee.
 
-### Build
+Functions
+constructor
+Initializes the contract with the token's name, symbol, initial supply, transfer fee, and fee receiver.
 
-```shell
-$ forge build
-```
+transfer
+Transfers tokens from the sender to the recipient.
 
-### Test
+transferFrom
+Transfers tokens from the sender to the recipient using an allowance.
 
-```shell
-$ forge test
-```
+_customTransfer
+The custom transfer function that deducts the transfer fee.
 
-### Format
+Usage
+To use the CustomToken contract, follow these steps:
 
-```shell
-$ forge fmt
-```
+Deploy the contract with the desired token name, symbol, initial supply, transfer fee, and fee receiver.
+Use the transfer or transferFrom function to transfer tokens between addresses.
+The contract will automatically deduct the transfer fee and send it to the fee receiver.
+Example
+Here is an example of how to deploy the contract and transfer tokens:
 
-### Gas Snapshots
+solidity
+Edit
+Copy code
+pragma solidity ^0.8.0;
 
-```shell
-$ forge snapshot
-```
+contract MyContract {
+    function deployCustomToken() public {
+        CustomToken token = new CustomToken("MyToken", "MTK", 1000000, 5, 0x742d35Cc6634C0532925a3b844Bc454e4438f44e);
+        token.transfer(address(this), 1000);
+    }
+}
+Resources
+OpenZeppelin ERC20 Contract
+Contributing
+Contributions to the CustomToken contract are welcome! If you'd like to contribute to the project, please follow the guidelines outlined in the Contributing Guide.
 
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+I hope this helps! Let me know if you'd like me to add or modify anything.
